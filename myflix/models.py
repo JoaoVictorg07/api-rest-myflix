@@ -1,14 +1,5 @@
 from django.db import models
 
-'''
-    id 
-    nome
-    email
-    cpf (maximo 11 caracteres)
-    data de nascimento
-    numero de telefone(maximo de 14 caracteres)
-'''
-
 class user(models.Model):
     nome = models.CharField(max_length=100)
     email = models.EmailField(blank=False, max_length=30)
@@ -18,13 +9,6 @@ class user(models.Model):
 
     def __str__(self):
         return self.nome
-
-''''
-    id 
-    codigo do stream (maximode 10 caracteres)
-    descrição
-    categoria (filme, série e documentario)
-'''
 
 class stream(models.Model):
     CATEGORIA = (
@@ -38,3 +22,7 @@ class stream(models.Model):
 
     def __str__(self):
         return self.codigo
+
+class lista(models.Model):
+    user = models.ForeignKey(user, on_delete=models.CASCADE)
+    stream = models.ForeignKey(stream, on_delete=models.CASCADE)

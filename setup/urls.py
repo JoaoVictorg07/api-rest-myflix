@@ -15,10 +15,37 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from myflix.views import users
+from django.urls import path, include
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+
+from myflix.views import userViewSet, streamViewSet, listaViewSet, listaUser, listaStream
+from rest_framework import routers, permissions
+
+router = routers.DefaultRouter()
+router.register('users', userViewSet, basename='users')
+router.register('streams', streamViewSet, basename='streams')
+router.register('listas', listaViewSet, basename='listas')
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Exemplo",
+        default_version="v1",
+        description="Documentação interativa da API Exemplo",
+        terms_of_service="https://www.seusite.com/terms/",
+        contact=openapi.Contact(email="contato@seusite.com"),
+        license=openapi.License(name="Licença MIT"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/',users)
+    path('',include(router.urls)),
+    path('user/<int:pk>/listas/', listaUser.as_view()),
+    path('stream/<int:pk>/stream/<int:pk>', listaStream.as_view()),
+    path('swager/', schema_view.without_ui('swager',cache_timeout=0), name='schema_swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc',cache_timeout=0), name='schema_redoc'),
 ]
